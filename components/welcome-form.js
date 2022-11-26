@@ -1,7 +1,4 @@
 import { LitElement, html, css } from "lit";
-import "./welcome-user";
-import "./access-denied";
-import "./welcome-slot";
 
 export class WelcomeForm extends LitElement {
   static properties = {
@@ -9,13 +6,11 @@ export class WelcomeForm extends LitElement {
     birthDate: { type: Date },
     validAge: { type: Boolean },
     showAnswer: { type: Boolean },
-    sum1: { type: Number },
-    sum2: { type: Number },
+    age: { type: Number },
   };
 
   constructor() {
     super();
-    this.birthDate = new Date();
     this.userName = "";
     this.validAge = false;
     this.showAnswer = false;
@@ -29,7 +24,7 @@ export class WelcomeForm extends LitElement {
         align-items: center;
         width: 100vw;
         height: 100vh;
-        justify-content: space-around;
+        justify-content: flex-start;
         background: linear-gradient(35deg, #c8d8ee, #030f4e);
       }
       .checkForm {
@@ -80,26 +75,17 @@ export class WelcomeForm extends LitElement {
 
   render() {
     return html`
-    ${console.log(this.validAge)}
+    
       <div id="checkForm" class="checkForm">
         <h1>Welcome</h1>
         <input placeholder="Your Name " id="userName" />
         <br />
         <label>Your Birth Date</label><input type="date" id="date" />
         <br />
-        <input placeholder="a number " id="sum1" /><p class="center">+</p><input placeholder="a number " id="sum2" />
+        
         <button id="checking" @click="${this.checkBirthDate}">Check</button>
       </div>
-      ${
-        this.showAnswer
-          ? html`<welcome-slot
-              userName=${this.userName}
-              birthDate=${this.birthDate}
-              sum1=${this.sum1}
-              sum2=${this.sum2}
-            ></welcome-slot>`
-          : html` <div></div> `
-      }
+      
       </div>
      
     `;
@@ -108,10 +94,43 @@ export class WelcomeForm extends LitElement {
   checkBirthDate() {
     this.showAnswer = true;
     this.userName = this.shadowRoot.getElementById("userName").value;
-    this.birthDate = new Date(this.shadowRoot.getElementById("date").value);
-    this.sum1 = this.shadowRoot.getElementById("sum1").value;
-    this.sum2 = this.shadowRoot.getElementById("sum2").value;
-    console.log(this.birthDate, "es el formato");
+    this.birthDate = new Date(
+      this.shadowRoot.getElementById("date").value
+    ).getTime();
+
+    
+    if ((((new Date().getTime() - this.birthDate))/(1000*60*60*24))/365>18) {
+    
+
+      /*const otherComponent = document.createElement("welcome-user");
+      otherComponent.setAttribute("showComponent", "true");
+      otherComponent.setAttribute("userName", this.userName);
+      otherComponent.classList.add("checkForm");
+      this.shadowRoot.getElementById("checkForm").after(otherComponent);*/
+      const welcomeAlert = document.createElement("h3");
+      welcomeAlert.classList.add("welcome");
+      welcomeAlert.textContent = "Welcome " + this.userName;
+      this.shadowRoot.getElementById("checkForm").append(welcomeAlert);
+      //console.log("bienvenido");
+    } else {
+      /*const accessDenied = document.createElement("access-denied");
+       accessDenied.setAttribute("showComponent", "true");
+       accessDenied.classList.add("checkForm");
+       this.shadowRoot.getElementById("checkForm").after(accessDenied);*/
+      const deniedAccess = document.createElement("h3");
+      deniedAccess.classList.add("deniedAccess");
+      deniedAccess.textContent = "Access Denied";
+      this.shadowRoot.getElementById("checkForm").append(deniedAccess);
+    console.log("denied");
+    }
+  }
+  yearDiff(dt1) {
+    console.log(dt1, "soydt1");
+    this.age =
+      (new Date().getTime() - dt1.getTime()) / (1000 * 60 * 60 * 24) / 365;
+    console.log(this.age, "es la edad");
+    return Math.abs(Math.round(diffYear / 365.25));
   }
 }
+
 customElements.define("welcome-form", WelcomeForm);
