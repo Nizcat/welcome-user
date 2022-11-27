@@ -1,12 +1,13 @@
 import { LitElement, html, css } from "lit";
-
+import "./welcome-user";
+import "./access-denied";
 export class WelcomeForm extends LitElement {
   static properties = {
     userName: { type: String },
     birthDate: { type: Date },
     validAge: { type: Boolean },
     showAnswer: { type: Boolean },
-    age: { type: Number },
+    showComponent: { type: Boolean },
   };
 
   constructor() {
@@ -87,41 +88,61 @@ export class WelcomeForm extends LitElement {
       </div>
       
       </div>
+      ${
+        this.showAnswer
+          ? html`
+              ${this.validAge
+                ? html`
+                    <welcome-user username=${this.userName}></welcome-user>
+                  `
+                : html` <access-denied>
+                    username=${this.userName}
+                  </access-denied>`}
+            `
+          : html` <div></div>`
+      }
      
     `;
   }
 
   checkBirthDate() {
-    this.showAnswer = true;
+    this.showAnswer=true;
     this.userName = this.shadowRoot.getElementById("userName").value;
     this.birthDate = new Date(
       this.shadowRoot.getElementById("date").value
     ).getTime();
 
-    
-    if ((((new Date().getTime() - this.birthDate))/(1000*60*60*24))/365>18) {
-    
+    if (
+      (new Date().getTime() - this.birthDate) / (1000 * 60 * 60 * 24) / 365 >
+      18
+    ) {
+      console.log(
+        (new Date().getTime() - this.birthDate) / (1000 * 60 * 60 * 24) / 365 >
+          18,
+        "mayor de edad"
+      );
+      this.validAge = true;
 
       /*const otherComponent = document.createElement("welcome-user");
       otherComponent.setAttribute("showComponent", "true");
       otherComponent.setAttribute("userName", this.userName);
       otherComponent.classList.add("checkForm");
       this.shadowRoot.getElementById("checkForm").after(otherComponent);*/
-      const welcomeAlert = document.createElement("h3");
+      /*const welcomeAlert = document.createElement("h3");
       welcomeAlert.classList.add("welcome");
       welcomeAlert.textContent = "Welcome " + this.userName;
       this.shadowRoot.getElementById("checkForm").append(welcomeAlert);
-      //console.log("bienvenido");
+      //console.log("bienvenido");*/
     } else {
       /*const accessDenied = document.createElement("access-denied");
        accessDenied.setAttribute("showComponent", "true");
        accessDenied.classList.add("checkForm");
        this.shadowRoot.getElementById("checkForm").after(accessDenied);*/
-      const deniedAccess = document.createElement("h3");
+      /*const deniedAccess = document.createElement("h3");
       deniedAccess.classList.add("deniedAccess");
       deniedAccess.textContent = "Access Denied";
       this.shadowRoot.getElementById("checkForm").append(deniedAccess);
-    console.log("denied");
+    console.log("denied");*/
     }
   }
   yearDiff(dt1) {
